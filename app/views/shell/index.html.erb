@@ -6,8 +6,14 @@
 <script src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js"></script>
 <link rel="stylesheet" type="text/css" href="http://static.flowplayer.org/tools/css/tabs.css" />
 
-<p>You can run the existing samples, or edit the code and see the results.</p>
+<p>You can use Wrest to simply retrieve content from websites, use Ruby hashes to POST form data
+and build wrappers around web resources so that you can treat them like Ruby objects.</p>
 
+<p>A few live examples are given below. Checkout the <a href="https://github.com/kaiwren/wrest">Wrest GitHub page</a> for more.</p>
+
+<h3>This is a Ruby shell. You can edit and run the code here.</h3>
+
+<br/>
 
 <ul class="tabs">
   <% code_samples.each do |title, content|  %>
@@ -97,8 +103,16 @@
     $("ul.tabs").tabs("div.panes > div");
     tabs_api = $("ul.tabs").data("tabs")
 
-    // When the tab changes.
-    tabs_api.onClick(run_and_format_current_code_snippet);
+    // Fires up as soon as a user clicks a tab (irrespective of
+    // whether the corresponding pane is loaded or not)
+    tabs_api.onClick(function() {
+      $("#text_output_div").hide();
+      $("#progress_bar").show();
+
+      // Who likes ugly hacks? But this Tab plugin doesn't have an event
+      // that fires only after a pane is displayed.
+      setTimeout(run_and_format_current_code_snippet, 500);
+    });
 
     // Do this when the page loads.
     run_and_format_current_code_snippet()

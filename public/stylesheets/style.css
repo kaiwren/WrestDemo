@@ -9,7 +9,7 @@ body {
 div { margin: 0; padding: 0;}
 
 pre {
-  font-size: 14px;
+  font-size: 0.9em;
 }
 
 div.menu { margin: 2em; }
@@ -24,7 +24,7 @@ a.menu_link {
 }
 a.menu_link:hover {   background-color: #768e78; color: white; text-decoration: none;}
 
-#text_output_div { background-color: #dee6e2; color: black; padding: 1em;}
+#text_output_div { background-color: #dee6e2; color: black; padding: 1em; overflow: auto;}
 
 a { color: #336699; text-decoration: none;}
 a:hover { text-decoration: underline; }
@@ -50,13 +50,22 @@ h2 { margin: 0; padding: 0; }
   letter-spacing: -1px;
 }
 #header h1 a { text-decoration: none; color: #1372dc;}
-#header h1 a:hover { text-decoration: none; color: #778877; }
+#header h1 a:hover { text-decoration: none; color: #522c31; }
 
 #header h2 { color: black; font-size: 15px; font-weight: 100; padding: 0 0 0 20px; }
 
 
 #contentwrap {
   padding: 2em 30px;
+}
+
+#footer {
+  background-color: #4a3c34; color: white;
+  padding: 1em;
+}
+
+#footer a {
+  color: white;
 }
 
 /* tab pane styling */
