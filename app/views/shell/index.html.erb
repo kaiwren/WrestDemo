@@ -1,0 +1,80 @@
+<%= javascript_include_tag "sh/shCore.js", "sh/shAutoloader.js", :cache => true %>
+<%= stylesheet_link_tag "sh/shCore.css", "sh/shCoreDefault.css", "sh/shThemeDefault.css", :cache => true %>
+
+
+<!-- For Tabbing !-->
+<script src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://static.flowplayer.org/tools/css/tabs.css" />
+
+<p>You can run the existing samples, or edit the code and see the results.</p>
+
+<textarea rows="20" cols="80" id="shell_input" style="display: none;">
+  <%= code_samples["Google Search"] %>
+</textarea>
+
+
+<div id="ruby_code">
+  <div id="menu">
+    <a href="#">Edit this code</a>
+  </div>
+
+  <ul class="tabs">
+    <% code_samples.each do |title, content|  %>
+      <li><a href="#"> <%= title %></a></li>
+    <%end%>
+  </ul>
+
+  <div class="panes">
+    <% code_samples.each do |title, content|  %>
+      <div>
+        <pre class="brush: rails"><%= content%></pre>
+      </div>
+    <%end%>
+  </div>
+</div>
+
+
+<h3>Output</h3>
+<img id="progress_bar" src="/images/progress_bar.gif" style="display: none;"/>
+
+<div id="text_output_div">
+  <pre id="text_output_pre">
+  </pre>
+</div>
+
+<script type="text/javascript">
+  
+  SyntaxHighlighter.autoloader(
+  'rails         /javascripts/sh/shBrushRuby.js'
+);
+
+  function run_script()
+  {
+    $("#text_output_div").hide();
+    $("#progress_bar").show();
+    
+    $.ajax({
+      url: '/execute',
+      type: 'POST',
+      dataType: 'text/plain',
+      data: 'shell_input='+escape($("#shell_input").val()),
+      success: function(data){
+        $("#text_output_pre").html(data)
+      },
+      error: function(data){
+        alert("network/server error");
+      },
+      complete: function(data) {
+        $("#progress_bar").hide(); $("#text_output_div").show();
+      }
+    });
+  };
+
+  $("#eval").click( run_script )
+
+  $(document).ready(function() {
+    SyntaxHighlighter.all();
+    $("ul.tabs").tabs("div.panes > div");
+    run_script();
+  })
+</script>
