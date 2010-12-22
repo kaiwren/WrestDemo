@@ -18,7 +18,7 @@ class ShellController < ApplicationController
       PP.pp eval_result, pretty_output="" if eval_result
     end
     
-    render :text => pretty_output
+    render :text => ERB::Util.html_escape(pretty_output)
   end
 
 end
