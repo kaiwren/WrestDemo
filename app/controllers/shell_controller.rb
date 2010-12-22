@@ -3,13 +3,22 @@ class ShellController < ApplicationController
   end
 
   def execute
-    result = ""
-    eval_result=eval(params[:shell_input]) rescue "Syntax error in your script." if params[:shell_input]
 
-    PP.pp eval_result, pretty_output=""
+    pretty_output = "Pass the code, will ya?"
+    eval_result = nil
+
+    if params[:input_code]
+      begin
+        eval_result=eval(params[:input_code])
+      rescue Exception => e
+        pretty_output =
+          ["There was an error in the script.", "", e ].join("\n")
+      end
+
+      PP.pp eval_result, pretty_output="" if eval_result
+    end
     
     render :text => pretty_output
-
   end
 
 end

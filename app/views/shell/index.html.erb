@@ -8,29 +8,31 @@
 
 <p>You can run the existing samples, or edit the code and see the results.</p>
 
-<textarea rows="20" cols="80" id="shell_input" style="display: none;">
-  <%= code_samples["Google Search"] %>
-</textarea>
 
+<ul class="tabs">
+  <% code_samples.each do |title, content|  %>
+    <li><a href="#"> <%= title %></a></li>
+  <%end%>
+</ul>
 
-<div id="ruby_code">
-  <div id="menu">
-    <a href="#">Edit this code</a>
-  </div>
+<div class="panes" id="pane">
+  <% code_samples.each do |title, content|  %>
 
-  <ul class="tabs">
-    <% code_samples.each do |title, content|  %>
-      <li><a href="#"> <%= title %></a></li>
-    <%end%>
-  </ul>
+    <div>
+      <div class="menu">
+        <a href="#" class="edit_code menu_link">Edit this code</a>
+      </div>
 
-  <div class="panes">
-    <% code_samples.each do |title, content|  %>
-      <div>
+      <!-- this PRE would be reformatted by SyntaxHighlighter !-->
+      <div class="formatted_code">
         <pre class="brush: rails"><%= content%></pre>
       </div>
-    <%end%>
-  </div>
+
+      <!-- the editable area is hidden by default !-->
+      <textarea rows="20" cols="120" class="plain_code" style="display: none; overflow: auto; font-size: 14px;"><%= content %></textarea>
+    </div>
+
+  <%end%>
 </div>
 
 
@@ -43,12 +45,14 @@
 </div>
 
 <script type="text/javascript">
-  
-  SyntaxHighlighter.autoloader(
-  'rails         /javascripts/sh/shBrushRuby.js'
-);
 
-  function run_script()
+  function runSyntaxHighlight() {
+    SyntaxHighlighter.autoloader('rails         /javascripts/sh/shBrushRuby.js' );
+    SyntaxHighlighter.all();
+  }
+
+  // Send the script to server to execute and get the output back.
+  function run_script(input_code)
   {
     $("#text_output_div").hide();
     $("#progress_bar").show();
@@ -57,7 +61,7 @@
       url: '/execute',
       type: 'POST',
       dataType: 'text/plain',
-      data: 'shell_input='+escape($("#shell_input").val()),
+      data: 'input_code='+escape(input_code),
       success: function(data){
         $("#text_output_pre").html(data)
       },
@@ -70,11 +74,50 @@
     });
   };
 
-  $("#eval").click( run_script )
+  function run_and_format_current_code_snippet() {
+    var current_pane=tabs_api.getCurrentPane();
+    
+    input_code = current_pane.find("textarea").hide().val();
+
+    // SyntaxHighlight the user's script
+    formatted_code = current_pane.find("div.formatted_code");
+    formatted_code.html('<pre class="brush: rails">' + input_code + '</pre>')
+    formatted_code.show();
+
+    runSyntaxHighlight();
+    run_script(input_code);
+  }
+
+
+  var tabs_api; // Exposes the methods of the Tab control.
 
   $(document).ready(function() {
-    SyntaxHighlighter.all();
+
+    // Initialize the tabs.
     $("ul.tabs").tabs("div.panes > div");
-    run_script();
-  })
+    tabs_api = $("ul.tabs").data("tabs")
+
+    // When the tab changes.
+    tabs_api.onClick(run_and_format_current_code_snippet);
+
+    // Do this when the page loads.
+    run_and_format_current_code_snippet()
+  });
+
+
+  $("a.edit_code").click( function() {
+    var current_pane=tabs_api.getCurrentPane()
+
+    if($(this).html() == "Edit this code") {
+      $(this).html("Run this code");
+
+      current_pane.find("div.formatted_code").hide();
+      current_pane.find("textarea").show();   // Show the code entry box.
+    }
+    else {
+      run_and_format_current_code_snippet();
+      $(this).html("Edit this code");
+    }
+  });
+
 </script>
